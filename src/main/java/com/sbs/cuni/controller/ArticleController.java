@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.sbs.cuni.dto.Article;
 import com.sbs.cuni.dto.ArticleReply;
 import com.sbs.cuni.dto.Board;
+import com.sbs.cuni.dto.Member;
 import com.sbs.cuni.service.ArticleService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -80,10 +81,27 @@ public class ArticleController {
 	}
 
 	@RequestMapping("/article/add")
-	public String showAdd(long boardId, Model model) {
+	public String showAdd(long boardId, Model model, HttpServletRequest request) {
 		Board board = articleService.getBoard(boardId);
 
 		model.addAttribute("board", board);
+		
+		boolean hasPermission = true;
+		
+		//관리자를 제외하고 나머지 회원이 공지사항을 작성못하게한다.
+		
+		Member loginedMember = (Member)request.getAttribute("loginedMember");
+		
+		if ( boardId == 1 && loginedMember.getPermissionLevel() == 0 ) {
+			hasPermission = false;
+		}
+		
+		if ( hasPermission == false ) {
+			model.addAttribute("historyBack", true);
+			model.addAttribute("alertMsg", "권한이 없습니다.");
+
+			return "common/redirect";
+		}
 
 		return "article/add";
 	}
