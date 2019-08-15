@@ -175,7 +175,7 @@ public class ArticleController {
 	@RequestMapping("/article/doDelete")
 	public String doDelete(Model model, @RequestParam Map<String, Object> param, HttpSession session, long id, long boardId) {
 		param.put("id", id);
-
+		
 		Map<String, Object> deleteRs = articleService.delete(param);
 
 		String msg = (String) deleteRs.get("msg");
@@ -245,6 +245,7 @@ public class ArticleController {
 		}
 
 		param.put("id", id);
+		
 
 		Map<String, Object> updateRs = articleService.updateReply(param);
 
