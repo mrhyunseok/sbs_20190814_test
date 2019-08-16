@@ -3,11 +3,13 @@
 
 <mapper namespace="com.sbs.cuni.dao.ArticleDao">
 	<select id="getList" parameterType="map" resultMap="Article">
-		SELECT A.*
+		SELECT A.*, M.name AS extra__writerName
 		<if test="extra__repliesCount == true">
 			, COUNT(DISTINCT AR.id) AS extra__repliesCount
 		</if>
 		FROM article AS A
+		LEFT JOIN `member` AS M
+		ON A.memberId = M.id
 		<if test="leftJoin__articleReply == true">
 			LEFT JOIN articleReply AS AR
 			ON A.id = AR.articleId
@@ -52,13 +54,15 @@
 
 	<select id="getReplies" parameterType="map"
 		resultMap="ArticleReply">
-		SELECT *
-		FROM articleReply
+		SELECT AR.*, M.name AS extra__writerName
+		FROM articleReply AS AR
+		LEFT JOIN `member` AS M
+		ON AR.memberId = M.id
 		WHERE articleId = #{articleId}
 		<if test="from > 0">
-			AND id >= #{from}
+			AND AR.id >= #{from}
 		</if>
-		ORDER BY id ASC
+		ORDER BY AR.id ASC
 	</select>
 
 
@@ -114,7 +118,7 @@
 		<set>
 			<if test="title != null">title = #{title},</if>
 			<if test="body != null">body = #{body},</if>
-			<if test="boardId != null">boardId = 1,</if>
+			<if test="boardId != null">boardId = #{boardId},</if>
 		</set>
 		WHERE id = #{id}
 	</update>
@@ -153,6 +157,7 @@
 		<id property="passwd" column="passwd" />
 		<association property="extra" javaType="java.util.HashMap">
 			<result property="repliesCount" column="extra__repliesCount" />
+			<result property="writerName" column="extra__writerName"/>
 		</association>
 	</resultMap>
 
@@ -164,6 +169,7 @@
 		<id property="memberId" column="memberId" />
 		<id property="body" column="body" />
 		<association property="extra" javaType="java.util.HashMap">
+		<result property="writerName" column="extra__writerName"/>
 		</association>
 	</resultMap>
 </mapper>
