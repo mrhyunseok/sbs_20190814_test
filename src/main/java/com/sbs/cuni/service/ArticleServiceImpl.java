@@ -183,9 +183,6 @@ public class ArticleServiceImpl implements ArticleService {
 			return Maps.of("resultCode", "F-1", "msg", "존재하지 않는 게시물 입니다.");
 		}
 
-		if (memberService.isMasterMember(loginedMemberId)) {
-			return Maps.of("resultCode", "S-1", "msg", "마스터회원은 모든 게시물을 수정할 수 있습니다.");
-		}
 
 		if (article.getMemberId() == loginedMemberId) {
 			return Maps.of("resultCode", "S-2", "msg", "게시물의 소유자는 해당 게시물을 수정 할 수 있습니다.");
